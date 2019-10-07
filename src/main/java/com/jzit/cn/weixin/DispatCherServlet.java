@@ -102,6 +102,16 @@ public class DispatCherServlet {
       case "6":
         content = "随机号码:"+caipiaoResDO.getRandomRedNum().replace(" ", ",")+"+"+caipiaoResDO.getRecommBlueNum();
         break;
+      case "双色球":
+        content="感谢您关注微信公从号【机智IT】\n"
+            + "====================\n"
+            + "- 回复【1】: 获取上一期开奖号码\n"
+            + "- 回复【2】: 获取前五期蓝球号码\n"
+            + "- 回复【3】: 获取本期备选红球号\n"
+            + "- 回复【4】: 获取本期备选蓝球号\n"
+            + "- 回复【5】: 获取推荐蓝球号\n"
+            + "- 回复【6】: 随机一注";
+        break;
       default:
         content= "输入功能号有误，请重新输入";
         break;
