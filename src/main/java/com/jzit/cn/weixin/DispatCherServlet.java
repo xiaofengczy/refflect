@@ -8,15 +8,16 @@ import com.jzit.cn.weixin.utils.CheckUtil;
 import com.jzit.cn.weixin.utils.HttpClientUtil;
 import com.jzit.cn.weixin.utils.XmlUtils;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONML;
-import org.springframework.cloud.function.json.JsonMapper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,10 +69,9 @@ public class DispatCherServlet {
     String content;
     switch (msgType) {
       case "text":
-        CaipiaoResDO caipiaoResDO = reffectService.calculateNum();
         String toUserName = mapResult.get("ToUserName");
         String fromUserName = mapResult.get("FromUserName");
-        content = getMsg(reqContent, caipiaoResDO);
+        content = getMsg(reqContent);
         String textMessage = setTextMessage(content, toUserName, fromUserName);
         log.info("postdispatCherServlet() info:{}", textMessage);
         out.print(textMessage);
@@ -82,8 +82,13 @@ public class DispatCherServlet {
     out.close();
   }
 
-  protected String getMsg(String reqContent, CaipiaoResDO caipiaoResDO) {
+  protected String getMsg(String reqContent) {
     String content;
+    List<String> reqList = Arrays.asList(new String[]{"1", "2", "3", "4", "5", "6", "双色球"});
+    CaipiaoResDO caipiaoResDO = new CaipiaoResDO();
+    if(reqList.contains(reqContent)){
+      caipiaoResDO = reffectService.calculateNum();
+    }
     switch (reqContent) {
       //查询上一期开奖号码
       case "1":
@@ -116,7 +121,7 @@ public class DispatCherServlet {
             + "- 回复【6】: 随机一注";
         break;
       default:
-        // 調用智能机器人接口
+      // 調用智能机器人接口
         String contentResult = HttpClientUtil.doGet(REQEST_HTTP + reqContent);
         JSONObject jsonObject = new JSONObject().parseObject(contentResult);
         content = jsonObject.getString("content");
