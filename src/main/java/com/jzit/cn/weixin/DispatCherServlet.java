@@ -84,7 +84,7 @@ public class DispatCherServlet {
 
   protected String getMsg(String reqContent) {
     String content;
-    List<String> reqList = Arrays.asList(new String[]{"1", "2", "3", "4", "5", "6", "双色球"});
+    List<String> reqList = Arrays.asList(new String[]{"1", "2", "3", "4", "5", "6"});
     CaipiaoResDO caipiaoResDO = new CaipiaoResDO();
     if(reqList.contains(reqContent)){
       caipiaoResDO = reffectService.calculateNum();
