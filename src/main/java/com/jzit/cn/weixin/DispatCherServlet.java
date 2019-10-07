@@ -8,7 +8,6 @@ import com.jzit.cn.weixin.utils.CheckUtil;
 import com.jzit.cn.weixin.utils.HttpClientUtil;
 import com.jzit.cn.weixin.utils.XmlUtils;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -18,11 +17,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 微信事件通知
@@ -36,6 +37,13 @@ public class DispatCherServlet {
   private ReffectService reffectService;
 
   private static final String REQEST_HTTP = "http://api.qingyunke.com/api.php?key=free&appid=0&msg=";
+
+  private static final String MOLI_HTTP = "http://i.itpk.cn/api.php?question=";
+
+  @Resource
+  private RestTemplate restTemplate;
+
+//  private static final String MOLI_HTTP = "http://i.itpk.cn/api.php?question=123&api_key=238587feb54094503430860db15fbf52&api_secret=nx3xlevpjghi";
 
   /**
    * 微信验证
@@ -86,7 +94,7 @@ public class DispatCherServlet {
     String content;
     List<String> reqList = Arrays.asList(new String[]{"1", "2", "3", "4", "5", "6"});
     CaipiaoResDO caipiaoResDO = new CaipiaoResDO();
-    if(reqList.contains(reqContent)){
+    if (reqList.contains(reqContent)) {
       caipiaoResDO = reffectService.calculateNum();
     }
     switch (reqContent) {
@@ -121,10 +129,14 @@ public class DispatCherServlet {
             + "- 回复【6】: 随机一注";
         break;
       default:
-      // 調用智能机器人接口
-        String contentResult = HttpClientUtil.doGet(REQEST_HTTP + reqContent);
-        JSONObject jsonObject = new JSONObject().parseObject(contentResult);
-        content = jsonObject.getString("content");
+        // 調用智能机器人接口
+        String url = MOLI_HTTP + reqContent
+            + "&api_key=238587feb54094503430860db15fbf52&api_secret=nx3xlevpjghi";
+        ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
+        content = forEntity.getBody();
+//        String contentResult = HttpClientUtil.doGet(REQEST_HTTP + reqContent);
+//        JSONObject jsonObject = new JSONObject().parseObject(contentResult);
+//        content = jsonObject.getString("content");
         break;
     }
     return content;
