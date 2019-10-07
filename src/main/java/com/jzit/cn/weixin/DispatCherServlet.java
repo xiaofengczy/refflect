@@ -103,7 +103,7 @@ public class DispatCherServlet {
         content = "随机号码:"+caipiaoResDO.getRandomRedNum().replace(" ", ",")+"+"+caipiaoResDO.getRecommBlueNum();
         break;
       default:
-        content= "输入号码有误，请重新输入";
+        content= "输入功能号有误，请重新输入";
         break;
     }
     return content;
