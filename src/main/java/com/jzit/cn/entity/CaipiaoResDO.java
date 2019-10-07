@@ -30,4 +30,7 @@ public class CaipiaoResDO {
   /**前五期蓝球号*/
   private String preBlueNumList;
 
+  /**上一期期号*/
+  private String preNo;
+
 }

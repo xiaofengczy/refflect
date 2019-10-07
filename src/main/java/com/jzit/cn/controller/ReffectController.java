@@ -4,7 +4,6 @@ import com.jzit.cn.service.ReffectService;
 import com.jzit.cn.utils.R;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**

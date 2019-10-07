@@ -61,13 +61,15 @@ public class DispatCherServlet {
     }
     String msgType = mapResult.get("MsgType");
     PrintWriter out = response.getWriter();
+    String reqContent = mapResult.get("Content");
 
+    String content;
     switch (msgType) {
       case "text":
         CaipiaoResDO caipiaoResDO = reffectService.calculateNum();
-        String content = jsonMapper.toString(caipiaoResDO);
         String toUserName = mapResult.get("ToUserName");
         String fromUserName = mapResult.get("FromUserName");
+        content = getMsg(reqContent, caipiaoResDO);
         String textMessage = setTextMessage(content, toUserName, fromUserName);
         log.info("postdispatCherServlet() info:{}", textMessage);
         out.print(textMessage);
@@ -76,6 +78,35 @@ public class DispatCherServlet {
         break;
     }
     out.close();
+  }
+
+  protected String getMsg(String reqContent, CaipiaoResDO caipiaoResDO) {
+    String content;
+    switch (reqContent){
+      //查询上一期开奖号码
+      case "1":
+        content = "上一期("+caipiaoResDO.getPreNo()+")开奖号码："+caipiaoResDO.getPreNum();
+        break;
+      case "2":
+        content = "前五期蓝号:"+caipiaoResDO.getPreBlueNumList().replace(" ",",");
+        break;
+      case "3":
+        content = "红球备选号:"+caipiaoResDO.getRedList().replace(" ", ",");
+        break;
+      case "4":
+        content = "蓝球备选号:"+caipiaoResDO.getBlueList().replace(" ", ",");
+        break;
+      case "5":
+        content = "推荐蓝球:"+caipiaoResDO.getRecommBlueNum().replace(" ", ",");
+        break;
+      case "6":
+        content = "随机号码:"+caipiaoResDO.getRandomRedNum().replace(" ", ",")+"+"+caipiaoResDO.getRecommBlueNum();
+        break;
+      default:
+        content= "输入号码有误，请重新输入";
+        break;
+    }
+    return content;
   }
 
   public String setTextMessage(String content, String toUserName, String fromUserName) {

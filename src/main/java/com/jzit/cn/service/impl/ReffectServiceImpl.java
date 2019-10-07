@@ -56,6 +56,7 @@ public class ReffectServiceImpl implements ReffectService {
     calculateBlueNumber(resultBo, caipiaoResDO);
     //上一期开奖号码
     caipiaoResDO.setPreNum(opencodeStr);
+    caipiaoResDO.setPreNo(curData.getExpect());
     return caipiaoResDO;
   }
 
