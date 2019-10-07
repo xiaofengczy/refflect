@@ -1,9 +1,11 @@
 package com.jzit.cn.weixin;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jzit.cn.entity.CaipiaoResDO;
 import com.jzit.cn.entity.TextMessage;
 import com.jzit.cn.service.ReffectService;
 import com.jzit.cn.weixin.utils.CheckUtil;
+import com.jzit.cn.weixin.utils.HttpClientUtil;
 import com.jzit.cn.weixin.utils.XmlUtils;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -13,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONML;
 import org.springframework.cloud.function.json.JsonMapper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,8 +34,7 @@ public class DispatCherServlet {
   @Resource
   private ReffectService reffectService;
 
-  @Resource
-  private JsonMapper jsonMapper;
+  private static final String REQEST_HTTP = "http://api.qingyunke.com/api.php?key=free&appid=0&msg=";
 
   /**
    * 微信验证
@@ -82,28 +84,29 @@ public class DispatCherServlet {
 
   protected String getMsg(String reqContent, CaipiaoResDO caipiaoResDO) {
     String content;
-    switch (reqContent){
+    switch (reqContent) {
       //查询上一期开奖号码
       case "1":
-        content = "上一期("+caipiaoResDO.getPreNo()+")开奖号码："+caipiaoResDO.getPreNum();
+        content = "上一期[" + caipiaoResDO.getPreNo() + "]开奖号码：" + caipiaoResDO.getPreNum();
         break;
       case "2":
-        content = "前五期蓝号:"+caipiaoResDO.getPreBlueNumList().replace(" ",",");
+        content = "前五期蓝号:" + caipiaoResDO.getPreBlueNumList().replace(" ", ",");
         break;
       case "3":
-        content = "红球备选号:"+caipiaoResDO.getRedList().replace(" ", ",");
+        content = "红球备选号:" + caipiaoResDO.getRedList().replace(" ", ",");
         break;
       case "4":
-        content = "蓝球备选号:"+caipiaoResDO.getBlueList().replace(" ", ",");
+        content = "蓝球备选号:" + caipiaoResDO.getBlueList().replace(" ", ",");
         break;
       case "5":
-        content = "推荐蓝球:"+caipiaoResDO.getRecommBlueNum().replace(" ", ",");
+        content = "推荐蓝球:" + caipiaoResDO.getRecommBlueNum().replace(" ", ",");
         break;
       case "6":
-        content = "随机号码:"+caipiaoResDO.getRandomRedNum().replace(" ", ",")+"+"+caipiaoResDO.getRecommBlueNum();
+        content = "随机号码:" + caipiaoResDO.getRandomRedNum().replace(" ", ",") + "+" + caipiaoResDO
+            .getRecommBlueNum();
         break;
       case "双色球":
-        content="感谢您关注微信公从号【机智IT】\n"
+        content = "感谢您关注微信公从号【机智IT】\n"
             + "====================\n"
             + "- 回复【1】: 获取上一期开奖号码\n"
             + "- 回复【2】: 获取前五期蓝球号码\n"
@@ -113,7 +116,10 @@ public class DispatCherServlet {
             + "- 回复【6】: 随机一注";
         break;
       default:
-        content= "输入功能号有误，请重新输入";
+        // 調用智能机器人接口
+        String contentResult = HttpClientUtil.doGet(REQEST_HTTP + reqContent);
+        JSONObject jsonObject = new JSONObject().parseObject(contentResult);
+        content = jsonObject.getString("content");
         break;
     }
     return content;
